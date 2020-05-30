@@ -1,87 +1,95 @@
 <?php
+require_once(__DIR__.'/../core/database/Connection.php');
+
 
 class PlantaModel {
-    private $codigo;
-    private $nome;
-    private $preco;
-    private $descricao;
-    private $dimensao;
-    private $tipologia;
 
-    // Uma planta pode ter um ou mais compartimentos
-    private $compartimentos = array();
+    // Abre nova conexão sempre que instanciar a classe PlantaDao
+    function __construct() {
+        $this->db = new Connection();
+        $this->connection = $db->getConnection();
+    } 
 
-    // Uma planta pode ter uma ou mais fotos
-    private $fotos = array();
+    public function registar($planta) {
+        $sql = "INSERT INTO plantas(nome,preco,descricao,dimensao,tipologia) 
+        + VALUES(:nome,:preco,:descricao,:dimensao,:tipologia)";
 
-    function __construct($nome, $preco, $descricao, $dimensao, $tipologia) {
-        $this->nome = $nome;
-        $this->preco = $preco;
-        $this->descricao = $descricao;
-        $this->dimensao = $dimensao;
-        $this->tipologia = $tipologia;
-    }
-    
-    public function setCodigo($codigo) {
-        $this->codigo = $codigo;
-    }
+         $statement = $this->connection->prepare($sql);
+         $statement->bindParam(':nome', $planta->getNome());
+         $statement->bindParam(':preco', $planta->getPreco());
+         $statement->bindParam(':descricao', $planta->getDescricao());
+         $statement->bindParam(':dimensao', $planta->getDimensao());
+         $statement->bindPara(':tipologia', $planta->getTipologia());
+         $result = $statement->execute();
 
-    public function getCodigo() {
-        return $this->codigo;
-    }
+            if ($result) {
+                echo "<script>alert('Planta Registada com Sucesso');</script>";
+                return pesquisaPlantaPorNome($planta->getNome());
+            } else {
+                echo "<script>alert('Erro ao tentar registar planta.');</script>";
+                return "Planta não encontrada";
+            }
+    }   
 
-    public function setNome($nome) {
-        $this->nome = nome;
-    }
+    public function alterar($codigo, $planta) {
+        $sql = "UPDATE plantas SET nome = :nome, preco = :preco, descricao = :descricao, 
+        + dimensao = :dimensao, tipologia = :tipologia WHERE codigo = :codigo";
 
-    public function getNome() {
-        return $this->nome;
-    }
+        $nome= $planta->getNome();
+        $preco = $planta->getPreco();
+        $descricao = $planta->getDescricao();
+        $dimensao = $planta->getDimensao();
+        $tipologia = $planta->getTipologia();
 
-    public function setPreco($preco) {
-        $this->preco = $preco;
-    }
+        if ($this->connection) {
+            $statement =$this->connection->prepare($sql);
+            $result = $statement->execute([':nome' => $nome, ':preco' => $preco, 
+            ':descricao' => $descricao, ':tipologia' => $tipologia, ':codigo' => $codigo]);
 
-    public function getPreco() {
-        return $this->preco;
-    }
+             if ($result) {
+                echo "<script>alert('Planta atualizada com sucesso!');</script>";
+             } else {
+                echo "<script>alert('Erro ao tentar atualizar a planta!');</script>";
+             }
+        }
 
-    public function setDescricao($descricao) {
-        $this->descricao = $descricao;
-    }
-
-    public function setDimensao($dimensao) {
-        $this->dimensao = $dimensao;
-    }
-
-    public function getDimensao() {
-        return $this->dimensao;
     }
 
-    public function setTipologia($tipologia) {
-        $this->tipologia = $tipologia;
+    public function apagar($codigo) {
+        $sql = "DELETE FROM plantas WHERE codigo = :codigo";       
+                
+        if ($this->connection) {
+            $statement = $this->connection.prepare($sql);
+            $result = $statement->execute([':codigo' => $codigo]);
+            if ($result) {
+                echo "<script>alert('Planta apagada com sucesso!');</script>";
+            } else {
+                echo "<script>alert('Erro ao tentar apagar planta!');</script>";
+            }
+        } else {
+            echo "<script>alert('Erro ao tentar Estabelecer conexã!');</script>";
+
+        }
+
     }
 
-    public function getTipologia() {
-        returh $this->tipologia;
-    }
+    // Pesquisa Planta por Nome
+    public function pesquisaPlantaPorNome($nome) {
+        $sql = "SELECT codigo FROM plantas WHERE nome = :nome";
+        $statement = $this->connection->prepare($sql);
+        $statement->bindParam(':nome', $nome);
+        $statement->execute();
+        $planta = $statement->fetch(PDO::fetch_OBJ);
+        return $planta->codigo;
+     }
 
-    public function setCompartimentos(array $compartimentos) {
-        $this->compartimentos = $compartimentos;
-    }
-
-    public function getCompartimentos() {
-        return $this->compartimentos;
-    }
-
-    public function setFotos(array $fotos) {
-        $this->fotos = $fotos;
-    }
-
-    public function getFotos() {
-        return $this->fotos;
-    }
+     public function listarTodasPlantas() {
+         $sql = "SELECT * FROM plantas";
+         $statement = $this->connection->prepare($sql);
+         $plantas = $statement->fetchAll(PDO::FETCH_OBJ);
+     }
 
 }
+    
 
 ?>
