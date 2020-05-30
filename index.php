@@ -1,5 +1,12 @@
 <?php 
 
+/**
+ * Importando controllers
+ */
+
+require('./controller/Planta.php');
+
+
     // Pega o inicio dos argumentos depois do /index.php/
     function getArgumentStart($uri) {
         foreach($uri as $key => $value) {
@@ -29,12 +36,15 @@
 
             // Pega o tipo de Request method enviado ao index.php e converte para letras minusculas, que sera a mesma função
             $function_name = $parameters[$start + 1] . "_" . strtolower($_SERVER['REQUEST_METHOD']);
+            echo 'function name: ' . $function_name;
 
-            // constroi um array que será responsável por armazenar o resto dos parametros
-            $args = array();
+ 
 
             // definindo o indice correcto do inicio dos parametros
             $start += 2;
+
+      // constroi um array que será responsável por armazenar o resto dos parametros
+          $args = array();
 
             /** 
              * enquanto o inicio for menor que o numero de parametros 
@@ -53,11 +63,12 @@
             call_user_func_array(array(new $controller_name, $function_name), $args);
 
         } else {
+
+            echo '<h1>Error</h1>';
         }
 
     }
 
-    // executa o roteador
     main();
 
-?>
+?> 

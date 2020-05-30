@@ -4,6 +4,8 @@ class Connection {
 
     function __construct() {
 
+        echo '<h1>Connection DB</h1>';
+
         // Script de configurações ex: dados para conexão com BD
         require_once(__DIR__.'/../../config/database.php');
 
@@ -15,13 +17,12 @@ class Connection {
         $hostname = 'mysql:host='. $this->db_params['servername'].';dbname=' . $this->db_params['dbname'];
         $username = $this->db_params['username'];
         $password = $this->db_params['password'];
-
         try {
             $conn = new PDO($hostname, $username, $password);
             $conn->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
             return $conn;
         } catch(PDOException $e) {
-            $e->getMessage();
+            echo 'Error:' . $e->getMessage();
             return false;
         }
     }

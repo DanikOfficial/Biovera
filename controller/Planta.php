@@ -6,20 +6,25 @@ require_once(__DIR__.'/../core/GenericController.php');
 class Planta extends GenericController {
 
     function __construct() {
+        echo 'Planta controller<br>';
         $this->model = new PlantaModel();
     }
 
-    // http://localhost/biovera/index.php/Planta/TodasPlantas/
-    function TodasPlantas_get() {
+    /**
+     * Renderiza a view responsavel por mostrar todas plantas
+     * ex: http://localhost/Biovera/index.php/Planta/TodasPlantas/
+     * */
+    function TodasPlantas_get(...$args) {
+        echo 'Teste';
         // Pega todas plantas
-        $result = $this->model->listarTodasPlantas();
+        $plantas = $this->model->listarTodasPlantas();
         // Manda todas plantas para a view
-        $this->renderizarViewComArgumentos('home', $result);
+        $this->renderizarViewComArgumentos('plantas', $plantas);
     }
 
-    // http://localhost/biovera/index.php/Planta/NovaPlanta/
+    // ex: http://localhost/biovera/index.php/Planta/NovaPlanta/
     function NovaPlanta_get() {
-        $this->load_view()
+        echo 'Inside Nova Planta';
 
     }
 
@@ -28,6 +33,10 @@ class Planta extends GenericController {
     }
 
     function AlterarPlanta_post(...$args) {
+
+    }
+
+    function PesquisaPlantaPorNome_get(...$args) {
 
     }
 

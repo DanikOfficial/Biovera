@@ -6,6 +6,7 @@ class PlantaModel {
 
     // Abre nova conexão sempre que instanciar a classe PlantaDao
     function __construct() {
+        echo '<h1>Planta Model<h1>';
         $this->db = new Connection();
         $this->connection = $db->getConnection();
     } 
@@ -86,7 +87,9 @@ class PlantaModel {
      public function listarTodasPlantas() {
          $sql = "SELECT * FROM plantas";
          $statement = $this->connection->prepare($sql);
+         $statement->execute();
          $plantas = $statement->fetchAll(PDO::FETCH_OBJ);
+         return $plantas;
      }
 
 }
